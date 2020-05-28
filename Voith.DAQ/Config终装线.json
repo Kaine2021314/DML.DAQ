@@ -1,0 +1,86 @@
+{
+  "DBString": "server=.;database=VoithDB;User=sa;Password=Dt100000;",
+  "PlcIpAddress": "192.168.0.4", //PLC地址  2/3
+  "StationList": [
+    {
+      "StationCode": "OP110",
+      "StationIndex": "110",
+      "StartAddr": 500,
+      "DStartAddr": 0,
+      "DBAddr1": 0,
+      "EKSStartAddr": 0,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP120",
+      "StationIndex": "120",
+      "StartAddr": 0,
+      "DStartAddr": 0,
+      "DBAddr1": 0,
+      "EKSStartAddr": 0,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP130",
+      "StationIndex": "130",
+      "StartAddr": 1300,
+      "DStartAddr": 202,
+      "DBAddr1": 0,
+      "EKSStartAddr": 0,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP140",
+      "StationIndex": "140",
+      "StartAddr": 1700,
+      "DStartAddr": 282,
+      "DBAddr1": 0,
+      "EKSStartAddr": 0,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP150",
+      "StationIndex": "150",
+      "StartAddr": 2100,
+      "DStartAddr": 382,
+      "DBAddr1": 0,
+      "EKSStartAddr": 0,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP160",
+      "StationIndex": "160",
+      "StartAddr": 2500,
+      "DStartAddr": 502,
+      "DBAddr1": 0,
+      "EKSStartAddr": 0,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP170",
+      "StationIndex": "170",
+      "StartAddr": 2900,
+      "DStartAddr": 0,
+      "DBAddr1": 0,
+      "EKSStartAddr": 0,
+      "Task": 0
+    }
+  ],
+  "MaterielCode": [
+    "153005346320CN",
+    "153007368220CN",
+    "153007369220CN",
+    "153007370220CN",
+    "153007736220CN",
+    "153007739220CN",
+    "153008134100CN"
+  ],
+  "Type1": [
+    "TC",
+    "WAG"
+  ],
+  "Type2": [
+    "9.9",
+    "10.8"
+  ]
+}

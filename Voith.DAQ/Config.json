@@ -1,0 +1,25 @@
+{
+  "DBString": "server=.;database=MESDB;User=sa;Password=Dt100000;",
+  "DBStringCurve": "server=.;database=CurveCollectionSCTN;User=sa;Password=Dt100000;",
+  "PlcIpAddress": "192.168.21.2",
+  "StationList": [
+    {
+      "StationCode": "OP010",
+      "StationIndex": "10",
+      "StartAddr": 1000,
+      "DStartAddr": 1000,
+      "DBAddr1": 1141,
+      "EKSStartAddr": 1004, //Ô¤Áô×Ö¶Î
+      "Task": 0
+    },
+    {
+      "StationCode": "OP021",
+      "StationIndex": "21",
+      "StartAddr": 1500,
+      "DStartAddr": 1500,
+      "DBAddr1": 1241,
+      "EKSStartAddr": 1504,
+      "Task": 0
+    }
+  ]
+}
