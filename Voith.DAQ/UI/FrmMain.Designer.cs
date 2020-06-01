@@ -598,7 +598,6 @@
             this.label35.Size = new System.Drawing.Size(498, 42);
             this.label35.TabIndex = 43;
             this.label35.Text = "线程初始化失败，请重新启动程序";
-            this.label35.Visible = false;
             // 
             // FrmMain
             // 

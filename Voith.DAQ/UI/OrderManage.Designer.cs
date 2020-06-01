@@ -32,8 +32,6 @@
             this.btnCancel = new CCWin.SkinControl.SkinButton();
             this.btnConfirm = new CCWin.SkinControl.SkinButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.skinButton1 = new CCWin.SkinControl.SkinButton();
@@ -43,7 +41,6 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.SuspendLayout();
             // 
@@ -54,7 +51,7 @@
             this.btnCancel.BorderColor = System.Drawing.Color.DarkGray;
             this.btnCancel.ControlState = CCWin.SkinClass.ControlState.Normal;
             this.btnCancel.DownBack = null;
-            this.btnCancel.Location = new System.Drawing.Point(843, 341);
+            this.btnCancel.Location = new System.Drawing.Point(486, 344);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(2);
             this.btnCancel.MouseBack = null;
             this.btnCancel.Name = "btnCancel";
@@ -71,7 +68,7 @@
             this.btnConfirm.BorderColor = System.Drawing.Color.DarkGreen;
             this.btnConfirm.ControlState = CCWin.SkinClass.ControlState.Normal;
             this.btnConfirm.DownBack = null;
-            this.btnConfirm.Location = new System.Drawing.Point(751, 341);
+            this.btnConfirm.Location = new System.Drawing.Point(394, 344);
             this.btnConfirm.Margin = new System.Windows.Forms.Padding(2);
             this.btnConfirm.MouseBack = null;
             this.btnConfirm.Name = "btnConfirm";
@@ -92,43 +89,24 @@
             this.dataGridView1.TabIndex = 5;
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             // 
-            // numericUpDown1
-            // 
-            this.numericUpDown1.Location = new System.Drawing.Point(73, 368);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
-            900,
-            0,
-            0,
-            0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(82, 21);
-            this.numericUpDown1.TabIndex = 7;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 370);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(53, 12);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "订单数量";
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 344);
+            this.label2.Location = new System.Drawing.Point(702, 389);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 12);
+            this.label2.Size = new System.Drawing.Size(17, 12);
             this.label2.TabIndex = 9;
-            this.label2.Text = "订单头SN";
+            this.label2.Text = "SN";
+            this.label2.Visible = false;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(73, 341);
+            this.textBox1.Location = new System.Drawing.Point(725, 386);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(173, 21);
+            this.textBox1.Size = new System.Drawing.Size(248, 21);
             this.textBox1.TabIndex = 10;
+            this.textBox1.Visible = false;
             // 
             // skinButton1
             // 
@@ -137,7 +115,7 @@
             this.skinButton1.BorderColor = System.Drawing.Color.DarkGreen;
             this.skinButton1.ControlState = CCWin.SkinClass.ControlState.Normal;
             this.skinButton1.DownBack = null;
-            this.skinButton1.Location = new System.Drawing.Point(499, 341);
+            this.skinButton1.Location = new System.Drawing.Point(157, 341);
             this.skinButton1.Margin = new System.Windows.Forms.Padding(2);
             this.skinButton1.MouseBack = null;
             this.skinButton1.Name = "skinButton1";
@@ -155,7 +133,7 @@
             this.skinButton2.BorderColor = System.Drawing.Color.DarkGreen;
             this.skinButton2.ControlState = CCWin.SkinClass.ControlState.Normal;
             this.skinButton2.DownBack = null;
-            this.skinButton2.Location = new System.Drawing.Point(499, 372);
+            this.skinButton2.Location = new System.Drawing.Point(157, 372);
             this.skinButton2.Margin = new System.Windows.Forms.Padding(2);
             this.skinButton2.MouseBack = null;
             this.skinButton2.Name = "skinButton2";
@@ -169,15 +147,15 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(327, 343);
+            this.label3.Location = new System.Drawing.Point(9, 344);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(53, 12);
+            this.label3.Size = new System.Drawing.Size(29, 12);
             this.label3.TabIndex = 14;
-            this.label3.Text = "变更数量";
+            this.label3.Text = "数量";
             // 
             // numericUpDown2
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(386, 341);
+            this.numericUpDown2.Location = new System.Drawing.Point(44, 341);
             this.numericUpDown2.Maximum = new decimal(new int[] {
             900,
             0,
@@ -195,7 +173,7 @@
             "1",
             "2",
             "3"});
-            this.comboBox1.Location = new System.Drawing.Point(674, 340);
+            this.comboBox1.Location = new System.Drawing.Point(317, 343);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(72, 20);
             this.comboBox1.TabIndex = 15;
@@ -203,7 +181,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(639, 344);
+            this.label4.Location = new System.Drawing.Point(282, 347);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(29, 12);
             this.label4.TabIndex = 16;
@@ -222,8 +200,6 @@
             this.Controls.Add(this.skinButton1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnConfirm);
@@ -237,7 +213,6 @@
             this.Text = "订单管理";
             this.Load += new System.EventHandler(this.OrderManage_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -248,8 +223,6 @@
         private CCWin.SkinControl.SkinButton btnCancel;
         private CCWin.SkinControl.SkinButton btnConfirm;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox1;
         private CCWin.SkinControl.SkinButton skinButton1;

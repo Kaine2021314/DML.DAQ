@@ -16,7 +16,7 @@ namespace Voith.DAQ.UI
     public partial class OrderManage : Skin_Color
     {
         private static readonly DbContext Db = new DbContext();
-        int count = 0;
+        //int count = 0;
         int id = 0;
         public OrderManage()
         {
@@ -28,7 +28,9 @@ namespace Voith.DAQ.UI
             dgv0.RowTemplate.ReadOnly = true;
             dgv0.AllowUserToAddRows = false;
             dgv0.RowHeadersVisible = false;
+            dgv0.MultiSelect = false;
             dgv0.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv0.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
         }
@@ -72,7 +74,9 @@ namespace Voith.DAQ.UI
         {
             try
             {
-                goodsOrder = Db.GoodsOrderDb.AsQueryable().Where(it => it.OrderStatus == 0).OrderBy(it => it.ID, OrderByType.Asc).First();
+                goodsOrder = Db.GoodsOrderDb.AsQueryable().Where(it => it.OrderStatus == 2).OrderBy(it => it.ID, OrderByType.Asc).First();
+                if (goodsOrder == null)
+                    goodsOrder = Db.GoodsOrderDb.AsQueryable().Where(it => it.OrderStatus == 1).OrderBy(it => it.ID, OrderByType.Asc).First();
                 if (goodsOrder != null)
                 {
                     goodsOrder = Db.GoodsOrderDb.AsQueryable().Where(it => it.ID < (goodsOrder.ID + 1) && it.HeadOrder == 1).OrderBy(it => it.ID, OrderByType.Desc).First();
@@ -80,9 +84,9 @@ namespace Voith.DAQ.UI
                     dataGridView1.DataSource = Db.GoodsOrderDb.AsQueryable().Where(it => it.ID >= goodsOrder.ID).OrderBy(it => it.ID, OrderByType.Asc).ToDataTable();
 
                     textBox1.Text = goodsOrder.SerialNumber;
-                    numericUpDown1.Value = goodsOrder.Count;
+                    //numericUpDown1.Value = goodsOrder.Count;
 
-                    count = goodsOrder.Count;
+                    //count = goodsOrder.Count;
                     id = goodsOrder.ID;
                 }
                 else
@@ -91,9 +95,9 @@ namespace Voith.DAQ.UI
                     dataGridView1.Rows.Clear();
 
                     textBox1.Text = "-";
-                    numericUpDown1.Value = 0;
+                    //numericUpDown1.Value = 0;
 
-                    count = 0;
+                    //count = 0;
                     id = 0;
                     numericUpDown2.Value = 0;
                 }
@@ -110,29 +114,47 @@ namespace Voith.DAQ.UI
                     return;
                 }
 
+                string lyd = goodsOrder0.SerialNumber.Substring(11, 5);
+                int lds = int.Parse(goodsOrder0.SerialNumber.Substring(16, 5));
+                //1[0空白/1完成/2原型] 9603510101 20[年] 365[第几天] 00000[每日归零] 2[产线] 01[工厂代码01/02] 002 000000000
+                //19603510101 20[年] 365[第几天] 00000[每日归零] 201002000000000
+                string ProductionOrderCode = "P{0}";
+                string SerialNumber0 = "19603510101{0}{1}{2}201002000000000";
+                string SerialNumber = "";
+                DateTime dateT = DateTime.Now;
+                string y = dateT.ToString("yy");
+                string d = dateT.DayOfYear.ToString("000");
+                int ds = 0;
+                if (lyd == y + d)
+                    ds = lds + 1;
+                //SerialNumber = string.Format(SerialNumber, y, d, ds);
+                ProductionOrderCode = string.Format(ProductionOrderCode, dateT.ToString("yyyyMMddHHmmssfff"));
+
                 int acount = (int)numericUpDown2.Value;
 
                 for (int i = 0; i < acount; i++)
                 {
+                    SerialNumber = string.Format(SerialNumber0, y, d, (ds++).ToString("00000"));
                     GoodsOrder order = new GoodsOrder
                     {
-                        MaterielCode = goodsOrder0.MaterielCode,
-                        ProductionOrderCode = goodsOrder0.ProductionOrderCode,
-                        SerialNumber = (Convert.ToInt32(goodsOrder0.SerialNumber) + i + 1).ToString(),//sn + (lastNo + i).ToString(),
+                        MaterielCode = "-",
+                        ProductionOrderCode = ProductionOrderCode,
+                        SerialNumber = SerialNumber,
                         OrderStatus = 0,
                         CheckResult = 0,
                         LocalTime = DateTime.Now,
-                        Type1 = goodsOrder0.Type1,
-                        Type2 = goodsOrder0.Type2,
+                        Type1 = "-",
+                        Type2 = "-",
 
                         PalletCode = "-",
                         ProductType = goodsOrder0.ProductType,
+                        HeadOrder = i == 0 ? 1 : 0,
                     };
                     Db.GoodsOrderDb.Insert(order);
                 }
-                goodsOrder.Count += acount;
-                count = goodsOrder.Count;
-                Db.GoodsOrderDb.Update(goodsOrder);
+                //goodsOrder.Count += acount;
+                //count = goodsOrder.Count;
+                //Db.GoodsOrderDb.Update(goodsOrder);
                 GetGoodsOrder();
 
                 //dataGridView1.DataSource = Db.GoodsOrderDb.AsQueryable().Where(it => it.ID >= id && it.OrderStatus != 3).OrderBy(it => it.ID, OrderByType.Asc).ToDataTable();
@@ -165,13 +187,8 @@ namespace Voith.DAQ.UI
                     List<GoodsOrder> gl = goodsOrderL.ToList();
                     for (int i = 0; i < scount; i++)
                     {
-                        //gl[i].OrderStatus = 3;
-                        //Db.GoodsOrderDb.Update(gl[i]);
                         Db.GoodsOrderDb.Delete(gl[i]);
                     }
-                    goodsOrder.Count -= scount;
-                    count = goodsOrder.Count;
-                    Db.GoodsOrderDb.Update(goodsOrder);
                     GetGoodsOrder();
                 }
                 //dataGridView1.DataSource = Db.GoodsOrderDb.AsQueryable().Where(it => it.ID >= id && it.OrderStatus != 3).OrderBy(it => it.ID, OrderByType.Asc).ToDataTable();
@@ -190,6 +207,7 @@ namespace Voith.DAQ.UI
                     {
                         selectRow = i;
                         comboBox1.Text = dataGridView1.Rows[i].Cells["OrderStatus"].Value.ToString();
+                        textBox1.Text = dataGridView1.Rows[i].Cells["SerialNumber"].Value.ToString();
                     }
                 }
             }
