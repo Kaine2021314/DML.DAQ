@@ -67,7 +67,7 @@ namespace Voith.DAQ.UI
                     {
                         try
                         {
-                            var bytes = PlcHelper.ReadBytes(1045, 0, 1);
+                            var bytes = PlcHelper.ReadBytes(SystemConfig.ControlDB, 0, 1);
 
                             //plc系统就绪信号
                             this.lbReady.ForeColor = PlcConvert.GetBitAt(bytes, 0, 0) ? Color.Green : Color.Red;
@@ -76,7 +76,7 @@ namespace Voith.DAQ.UI
                             this.lbLifeBeat.ForeColor = PlcConvert.GetBitAt(bytes, 0, 1) ? Color.Green : Color.Gray;
 
                             //写入心跳信号
-                            PlcHelper.Write<bool>(1045, 0, lifeBeat = !lifeBeat, 3);
+                            PlcHelper.Write<bool>(SystemConfig.DTControlDB, 0, lifeBeat = !lifeBeat, 3);
                         }
                         catch 
                         {

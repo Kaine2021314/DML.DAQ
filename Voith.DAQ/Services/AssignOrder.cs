@@ -31,19 +31,9 @@ namespace Voith.DAQ.Services
                 //判断是否有订单，如果没有，则进入创建订单页面
                 if (goodsOrder == null)
                 {
-                    if (mode == 5)
-                    {
-                        LogHelper.Info("GetOrder3-mode->" + mode);
-                        CreateOrder();
-                    }
-                    else
-                    {
-                        LogHelper.Info("GetOrder1-mode->" + mode);
-                        //OP010 PLC切换到订单创建模式
-                        PlcHelper.Write(SystemConfig.ControlDB, 14, (short)1);
-
-                    }
-                    //goto BEGIN;
+                    LogHelper.Info("GetOrder1-mode->" + mode);
+                    //OP010 告知订单下发异常 订单用完
+                    //PlcHelper.Write(SystemConfig.ControlDB, 14, (short)1);
                 }
                 else
                 {

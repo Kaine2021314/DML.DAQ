@@ -50,7 +50,7 @@ namespace Voith.DAQ.Services
                         FNo = formulaNo.Length > 0 && formulaNo[0] > 0 ? formulaNo[0] : (short)1;
                         if (datas[0] == 1)//校验本工位数据
                         {
-                            if (Check(_workpiece.StationCode) && CheckEx(_workpiece.StationCode))
+                            if (Check(_workpiece.StationCode))
                             {
                                 PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 244, 101);
                                 PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 360, 1);
@@ -116,7 +116,7 @@ namespace Voith.DAQ.Services
                                 }
                             }
 
-                            if (Check(stationName) && CheckEx(stationName))
+                            if (Check(stationName))
                             {
                                 PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 32, 101);
                                 LogHelper.Info($"校验前工位数据->合格->{_workpiece.StationCode}->101->{stationCode}");
@@ -205,26 +205,7 @@ namespace Voith.DAQ.Services
 
             switch (stationCode)
             {
-                case "OP025":
-                    checkFlag0 = OtherCheckData(dataList, 1);
-                    break;
-                case "OP045":
-                case "OP046":
-                    checkFlag0 = OtherCheckData(dataList, 26);
-                    break;
-                case "OP070":
-                    checkFlag0 = OtherCheckData(dataList, 1);
-                    break;
-                case "OP051":
-                    checkFlag0 = OtherCheckData(dataList, 1);
-                    break;
-                case "OP061":
-                    checkFlag0 = OtherCheckData(dataList, 3, 2);
-                    checkFlag0 &= keycode != null && keycode.Rows.Count > 0;
-                    break;
-                case "OP081":
-                case "OP082":
-                    checkFlag0 = OtherCheckData(dataList, 25);
+                case "OP025000000":
                     break;
                 default:
                     checkFlag0 = StandardCheckData(formulas, dataList);
@@ -267,84 +248,6 @@ namespace Voith.DAQ.Services
             }
             checkFlag0 &= formulas.Rows.Count > 0;
             return checkFlag0;
-        }
-
-        private static bool OtherCheckData(DataTable dataList, short count, short startindex = 1)
-        {
-            bool checkFlag0 = true;
-
-            for (int i = startindex; i <= count; i++)
-            {
-                bool checkFlag = false;
-                foreach (DataRow row in dataList.Rows)
-                {
-                    if (int.Parse(row["StepNo"].ToString()) == i)
-                    {
-                        if (row["CheckResult"]?.ToString() == "True")
-                        {
-                            //校验合格
-                            //goto NextData;
-                            checkFlag = true;
-                            break;
-                        }
-                        else
-                        {
-                            //校验不合格
-                            checkFlag = false;
-                        }
-                    }
-                }
-                checkFlag0 &= checkFlag;
-            }
-
-            return checkFlag0;
-        }
-
-        //外围数据校验
-        bool CheckEx(string stationCode)
-        {
-            bool R = false;
-            string sql;
-            if (stationCode == "OP010")
-            {
-                sql =
-               $"SELECT * FROM dbo.QualityData WHERE SerialNumber = '{_workpiece.SerialNumber}' AND StationCode = '{stationCode}'" +
-               $" AND DataType ='{ 901 }' AND CheckResult={1}";
-                var dataList = _db.Db.Ado.GetDataTable(sql);
-
-                sql =
-              $"SELECT * FROM dbo.QualityData WHERE SerialNumber = '{_workpiece.SerialNumber}' AND StationCode = '{stationCode}'" +
-              $" AND DataType ='{ 902 }' AND CheckResult={1}";
-                var dataList2 = _db.Db.Ado.GetDataTable(sql);
-
-                R = dataList.Rows.Count > 0 && dataList2.Rows.Count > 0;
-            }
-            else if (stationCode == "OP021")
-            {
-                sql =
-              $"SELECT * FROM dbo.QualityData WHERE SerialNumber = '{_workpiece.SerialNumber}' AND StationCode = '{stationCode}'" +
-              $" AND DataType ='{ 903 }' AND CheckResult={1}";
-                var dataList = _db.Db.Ado.GetDataTable(sql);
-
-                R = dataList.Rows.Count > 0;
-            }
-            else if (stationCode == "OP030")
-            {
-                sql =
-               $"SELECT * FROM dbo.QualityData WHERE SerialNumber = '{_workpiece.SerialNumber}' AND StationCode = '{stationCode}'" +
-               $" AND DataType ='{ 904 }' AND CheckResult={1}";
-                var dataList = _db.Db.Ado.GetDataTable(sql);
-                sql =
-             $"SELECT * FROM dbo.QualityData WHERE SerialNumber = '{_workpiece.SerialNumber}' AND StationCode = '{stationCode}'" +
-             $" AND DataType ='{ 905 }' AND CheckResult={1}";
-                var dataList2 = _db.Db.Ado.GetDataTable(sql);
-
-                R = dataList.Rows.Count > 0 && dataList2.Rows.Count > 0;
-            }
-            else
-                R = true;
-
-            return R;
         }
 
         private bool StationData(byte[] bytes)
