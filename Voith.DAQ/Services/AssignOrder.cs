@@ -31,14 +31,14 @@ namespace Voith.DAQ.Services
                 //判断是否有订单，如果没有，则进入创建订单页面
                 if (goodsOrder == null)
                 {
-                    LogHelper.Info("GetOrder1-mode->" + mode);
+                    LogHelper.Info("GetOrder-无可用订单项");
                     //OP010 告知订单下发异常 订单用完
-                    //PlcHelper.Write(SystemConfig.ControlDB, 14, (short)1);
+                    //PlcHelper.Write(SystemConfig.ControlDB, 132, (short)102);//订单获取失败
                 }
                 else
                 {
-                    LogHelper.Info("GetOrder2-mode->" + mode);
-                    PlcHelper.Write(SystemConfig.ControlDB, 14, (short)2);
+                    LogHelper.Info("GetOrder-订单获取到");
+                    //PlcHelper.Write(SystemConfig.DTControlDB, 132, (short)101);//订单获取成功
                 }
 
                 return goodsOrder;
@@ -52,7 +52,7 @@ namespace Voith.DAQ.Services
         }
 
         /// <summary>
-        /// 进入订单创建模式
+        /// 进入订单创建模式---
         /// </summary>
         private static void CreateOrder()
         {

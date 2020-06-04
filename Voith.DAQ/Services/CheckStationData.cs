@@ -128,37 +128,37 @@ namespace Voith.DAQ.Services
                             }
                         }
 
-                        if (_workpiece.StationCode == "OP010")
-                        {
-                            datas = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 370, 1);
-                            if (datas[0] == 2)
-                            {
-                                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 370, 0);
-                                var order = _db.GoodsOrderDb.GetList(it => it.OrderStatus == 0 && it.PalletCode == _workpiece.TrayCode).FirstOrDefault();
-                                string sql = $"SELECT TOP 1 * FROM dbo.GoodsOrder WHERE OrderStatus = 1 ORDER BY ID desc";
-                                var vt2 = _db.Db.Ado.GetDataTable(sql);
-                                if (order != null)
-                                {
-                                    LogHelper.Info($"校验本工位数据->10工位订单上线更新->{_workpiece.StationCode}");
-                                    order.OrderStatus = 1;
-                                    _db.GoodsOrderDb.Update(order);
-                                    PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 372, 201);
-                                }
-                                else
-                                {
-                                    if (vt2 != null && vt2.Rows.Count > 0 && vt2.Rows[0]["PalletCode"].ToString() == _workpiece.TrayCode)
-                                    {
-                                        LogHelper.Info($"校验本工位数据->10工位订单上线更新 NoUpdate->{_workpiece.StationCode}");
-                                        PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 372, 201);
-                                    }
-                                    else
-                                    {
-                                        LogHelper.Info($"校验本工位数据->10工位订单上线更新 Failed->{_workpiece.StationCode}");
-                                        PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 372, 202);
-                                    }
-                                }
-                            }
-                        }
+                        //if (_workpiece.StationCode == "OP010")
+                        //{
+                        //    datas = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 370, 1);
+                        //    if (datas[0] == 2)
+                        //    {
+                        //        PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 370, 0);
+                        //        var order = _db.GoodsOrderDb.GetList(it => it.OrderStatus == 0 && it.PalletCode == _workpiece.TrayCode).FirstOrDefault();
+                        //        string sql = $"SELECT TOP 1 * FROM dbo.GoodsOrder WHERE OrderStatus = 1 ORDER BY ID desc";
+                        //        var vt2 = _db.Db.Ado.GetDataTable(sql);
+                        //        if (order != null)
+                        //        {
+                        //            LogHelper.Info($"校验本工位数据->10工位订单上线更新->{_workpiece.StationCode}");
+                        //            order.OrderStatus = 1;
+                        //            _db.GoodsOrderDb.Update(order);
+                        //            PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 372, 201);
+                        //        }
+                        //        else
+                        //        {
+                        //            if (vt2 != null && vt2.Rows.Count > 0 && vt2.Rows[0]["PalletCode"].ToString() == _workpiece.TrayCode)
+                        //            {
+                        //                LogHelper.Info($"校验本工位数据->10工位订单上线更新 NoUpdate->{_workpiece.StationCode}");
+                        //                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 372, 201);
+                        //            }
+                        //            else
+                        //            {
+                        //                LogHelper.Info($"校验本工位数据->10工位订单上线更新 Failed->{_workpiece.StationCode}");
+                        //                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 372, 202);
+                        //            }
+                        //        }
+                        //    }
+                        //}
                     }
                     catch (Exception ex)
                     {
@@ -219,8 +219,7 @@ namespace Voith.DAQ.Services
         {
             bool checkFlag0 = true;
 
-            string[] operationTypeList = new[] { "3", "4" };//配方中有质量数据的操作类型编号
-            //string[] operationTypeList = new[] { "3", "4", "5" };//配方中有质量数据的操作类型编号
+            string[] operationTypeList = new[] { "1", "2", "3", "4" };//配方中有质量数据的操作类型编号
             foreach (DataRow formula in formulas.Rows)
             {
                 if (operationTypeList.Contains(formula["OperationTypeId"]?.ToString()))

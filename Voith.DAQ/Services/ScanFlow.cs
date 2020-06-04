@@ -46,9 +46,9 @@ namespace Voith.DAQ.Services
                             var scanerCode = PlcHelper.Read<string>(SystemConfig.ControlDB, startAddress + 20, 98)[0];
 
                             //获取托盘状态
-                            var TrayStatus = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 26, 2);
-                            _workpiece.TrayStatus = TrayStatus[0];
-                            LogHelper.Info($"扫码->{_workpiece.StationCode}->{scanerCode}->{TrayStatus[0]}");
+                            //var TrayStatus = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 126, 2);
+                            //_workpiece.TrayStatus = TrayStatus[0];
+                            //LogHelper.Info($"扫码->{_workpiece.StationCode}->{scanerCode}->{TrayStatus[0]}");
 
                             if (_workpiece.TrayStatus == 0)
                             {
@@ -59,9 +59,6 @@ namespace Voith.DAQ.Services
                                     case 1://工件扫描 不扫托盘号
                                         if (!string.IsNullOrEmpty(scanerCode) /*&& scanerCode.Length == 3 && scanerCode.Substring(0, 1) == "A"*/)
                                         {
-
-                                            QueryOrderInfo(scanerCode, 2);
-
                                             if (_workpiece.StationIndex == 6200000)
                                             {
                                                 //NOK岔道口处理
@@ -85,37 +82,29 @@ namespace Voith.DAQ.Services
                                                 if (!Check(_workpiece.StationCode))
                                                 {
                                                     rcode = QueryOrderInfo(scanerCode, 2);
-                                                    PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 360, 0);//本工位合格放行
+                                                    //PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 114, 0);//本工位合格放行
                                                     LogHelper.Info($"扫码 订单获取完成->{_workpiece.StationCode}->{_workpiece.SerialNumber}->{scanerCode}");
                                                 }
                                                 else
                                                 {
                                                     if (string.IsNullOrEmpty(_workpiece.SerialNumber))
                                                     {
-                                                        LogHelper.Info($"扫码 托盘未绑定条码->{_workpiece.StationCode}->->{scanerCode}-> 102");
+                                                        LogHelper.Info($"扫码 工件未绑定条码->{_workpiece.StationCode}->->{scanerCode}-> 102");
                                                         rcode = 102;
-                                                        PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 360, 2);//
-
-                                                        if (_workpiece.StationIndex == 70)
-                                                        {
-                                                            rcode = 101;
-                                                            //写入空托盘放行信号
-                                                            PlcHelper.Write(SystemConfig.DTControlDB, _workpiece.StartAddr + 360, (short)2);
-                                                            PlcHelper.Write(SystemConfig.DTControlDB, _workpiece.StartAddr + 248, (short)101);
-                                                        }
+                                                        //PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 114, 2);//
                                                     }
                                                     else
                                                     {
                                                         LogHelper.Info($"扫码 本工位合格放行->{_workpiece.StationCode}->{_workpiece.SerialNumber}->{scanerCode}-> 101 1");
                                                         rcode = 101;
-                                                        PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 360, 1);//本工位合格放行
+                                                        //PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 114, 1);//本工位合格放行
                                                     }
                                                 }
                                             }
                                         }
                                         break;
                                 }
-                                PlcHelper.Write(SystemConfig.DTControlDB, _workpiece.StartAddr + 248, rcode);
+                                PlcHelper.Write(SystemConfig.DTControlDB, _workpiece.StartAddr + 110, rcode);
                             }
                             else if (_workpiece.TrayStatus == 2 && !string.IsNullOrEmpty(scanerCode) && scanerCode.Length == 3 && scanerCode.Substring(0, 1) == "A")
                             {
@@ -126,8 +115,8 @@ namespace Voith.DAQ.Services
                                 //_db.Db.Ado.ExecuteCommand(sql);
                                 ////+360 给2 空托盘放行信号
                                 //LogHelper.Info($"托盘扫码 空托盘放行信号->{_workpiece.StationCode}->{_workpiece.SerialNumber}->{scanerCode}-> 101 2");
-                                //PlcHelper.Write(SystemConfig.DTControlDB, _workpiece.StartAddr + 248, (short)101);
-                                //PlcHelper.Write(SystemConfig.DTControlDB, _workpiece.StartAddr + 360, (short)2);
+                                //PlcHelper.Write(SystemConfig.DTControlDB, _workpiece.StartAddr + 110, (short)101);
+                                //PlcHelper.Write(SystemConfig.DTControlDB, _workpiece.StartAddr + 114, (short)2);
                             }
                         }
                         Thread.Sleep(300);
@@ -151,13 +140,11 @@ namespace Voith.DAQ.Services
 
             try
             {
-                /*所有工位数据都在一个DB块，每个工位数据占用1000个字节，
-                    根据工位位置确定读取的数据起始位置*/
                 var startAddress = _workpiece.StartAddr;
 
                 if (string.IsNullOrWhiteSpace(scanerCode))
                 {
-                    //PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 248, 102);
+                    //PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 110, 102);
                     return 102;
                 }
                 _workpiece.TrayCode = scanerCode;
@@ -172,28 +159,28 @@ namespace Voith.DAQ.Services
                     {
                         orders0 = _db.GoodsOrderDb.GetList(it => (it.OrderStatus == 1 || it.OrderStatus == 0) && it.PalletCode == _workpiece.TrayCode);
                         order = orders0.FirstOrDefault();
-                        LogHelper.Info("QueryOrderInfo-op010->订单获取-1");
+                        PlcHelper.Write(SystemConfig.DTControlDB, 132, (short)101);//订单获取成功
+                        LogHelper.Info("QueryOrderInfo-op010->订单获取 已有");
                     }
                     else
                     {
-                        LogHelper.Info("QueryOrderInfo-op010->订单获取-2->mode>" + mode);
-                        //var orders = _db.GoodsOrderDb.GetList(it => it.OrderStatus == 0);
-                        //if (orders.Count > 0)
-                        //{
+                        LogHelper.Info("QueryOrderInfo-op010->订单获取 新");
+
                         order = AssignOrder.GetOrder(mode); //_db.GoodsOrderDb.GetList(it => it.OrderStatus == 0).OrderBy(it => it.ID).FirstOrDefault();
                         if (order != null)
                         {
-                            LogHelper.Info("QueryOrderInfo->Has->" + mode);
                             order.PalletCode = _workpiece.TrayCode;
-                            //order.OrderStatus = 1;
+                            order.OrderStatus = 1;
                             order.OnLineTime = DateTime.Now;
                             _db.GoodsOrderDb.Update(order);
+                            PlcHelper.Write(SystemConfig.DTControlDB, 132, (short)101);//订单获取成功
+                            LogHelper.Info("QueryOrderInfo->Has");
                         }
                         else
                         {
-                            LogHelper.Info("QueryOrderInfo->null->" + mode);
+                            PlcHelper.Write(SystemConfig.DTControlDB, 132, (short)102);//订单获取失败
+                            LogHelper.Info("QueryOrderInfo->null");
                         }
-                        //}
                     }
                 }
                 else
@@ -230,22 +217,22 @@ namespace Voith.DAQ.Services
                     PlcHelper.Write<short>(SystemConfig.DTControlDB, 24, (short)DayOKOrdersCount);//当天OK数量
                     PlcHelper.Write<short>(SystemConfig.DTControlDB, 26, (short)0);//当天NG数量
 
-                    LogHelper.Info($"托盘扫码 QueryOrderInfo->{_workpiece.StationCode}->{ _workpiece.SerialNumber}->" +
+                    LogHelper.Info($"扫码 QueryOrderInfo->{_workpiece.StationCode}->{ _workpiece.SerialNumber}->" +
                         $"{ _workpiece.ProductTypeCode}->{ _workpiece.MaterielCode}->{_workpiece.Type1}->{_workpiece.Type2}");
                     R = 101;
                 }
                 else
                 {
-                    LogHelper.Info("订单异常");
+                    LogHelper.Info("QueryOrderInfo->订单异常");
                     _workpiece.SerialNumber = "";
-                    //PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 248, 102);
+                    //PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 110, 102);
                     R = 102;
                 }
             }
             catch (Exception e)
             {
                 R = 102;
-                LogHelper.Error(e);
+                LogHelper.Error(e, "QueryOrderInfo");
             }
 
             return R;
@@ -256,7 +243,7 @@ namespace Voith.DAQ.Services
             bool checkFlag0 = true;
             //var signals = PlcHelper.Read<short>(SystemConfig.ControlDB, _workpiece.StartAddr + 240, 2);
             
-            var formulaNo = PlcHelper.Read<short>(_workpiece.DBAddr1, 0);
+            var formulaNo = PlcHelper.Read<short>(_workpiece.DBAddr1, 0);//未定需要修改
             short FNo = formulaNo.Length > 0 && formulaNo[0] > 0 ? formulaNo[0] : (short)1;
             
             string sql =
@@ -283,8 +270,7 @@ namespace Voith.DAQ.Services
         {
             bool checkFlag0 = true;
 
-            string[] operationTypeList = new[] { "3", "4" };//配方中有质量数据的操作类型编号
-            //string[] operationTypeList = new[] { "3", "4", "5" };//配方中有质量数据的操作类型编号
+            string[] operationTypeList = new[] { "1", "2", "3", "4" };//配方中有质量数据的操作类型编号
             foreach (DataRow formula in formulas.Rows)
             {
                 if (operationTypeList.Contains(formula["OperationTypeId"]?.ToString()))
@@ -297,7 +283,6 @@ namespace Voith.DAQ.Services
                             if (row["CheckResult"]?.ToString() == "True")
                             {
                                 //校验合格
-                                //goto NextData;
                                 checkFlag = true;
                             }
                             else

@@ -3,7 +3,7 @@
     public class Workpiece
     {
         /// <summary>
-        /// 托盘号+
+        /// 改作 零件号使用
         /// </summary>
         public string TrayCode { get; set; }
 
