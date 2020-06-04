@@ -23,10 +23,16 @@ namespace Voith.DAQ
         public static string DBStringCurve = "";
         public static DateTime tagdate = DateTime.Now;
         public static int tagcount = 1;
+
         /// <summary>
         /// 控制DB块
         /// </summary>
-        public static int ControlDB = 1045;
+        public static int ControlDB = 1044;
+
+        /// <summary>
+        /// DT控制DB块
+        /// </summary>
+        public static int DTControlDB = 1045;
 
         /// <summary>
         /// 数据DB块

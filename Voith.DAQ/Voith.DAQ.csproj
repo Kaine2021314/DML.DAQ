@@ -7,7 +7,7 @@
     <ProjectGuid>{B6E9C586-BF06-48DB-8647-43AF2CF5EBA2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Voith.DAQ</RootNamespace>
-    <AssemblyName>Voith.DAQ</AssemblyName>
+    <AssemblyName>DML.DAQ</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

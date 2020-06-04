@@ -1,7 +1,7 @@
 {
   "DBString": "server=.;database=MESDB;User=sa;Password=Dt100000;",
   "DBStringCurve": "server=.;database=CurveCollectionSCTN;User=sa;Password=Dt100000;",
-  "PlcIpAddress": "192.168.21.2",
+  "PlcIpAddress": "192.168.21.22",
   "StationList": [
     {
       "StationCode": "OP010",
@@ -13,11 +13,92 @@
       "Task": 0
     },
     {
-      "StationCode": "OP021",
-      "StationIndex": "21",
+      "StationCode": "OP020",
+      "StationIndex": "20",
       "StartAddr": 1500,
-      "DStartAddr": 1500,
+      "DStartAddr": 3000,
       "DBAddr1": 1241,
+      "EKSStartAddr": 1504,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP030",
+      "StationIndex": "30",
+      "StartAddr": 2000,
+      "DStartAddr": 5000,
+      "DBAddr1": 1341,
+      "EKSStartAddr": 1504,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP040",
+      "StationIndex": "40",
+      "StartAddr": 2500,
+      "DStartAddr": 7000,
+      "DBAddr1": 1441,
+      "EKSStartAddr": 1504,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP045-",
+      "StationIndex": "45",
+      "StartAddr": 3000,
+      "DStartAddr": 9000,
+      "DBAddr1": 1541,
+      "EKSStartAddr": 1504,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP050",
+      "StationIndex": "50",
+      "StartAddr": 3500,
+      "DStartAddr": 11000,
+      "DBAddr1": 1641,
+      "EKSStartAddr": 1504,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP060",
+      "StationIndex": "60",
+      "StartAddr": 4000,
+      "DStartAddr": 13000,
+      "DBAddr1": 1741,
+      "EKSStartAddr": 1504,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP065-",
+      "StationIndex": "65",
+      "StartAddr": 4500,
+      "DStartAddr": 15000,
+      "DBAddr1": 1841,
+      "EKSStartAddr": 1504,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP070-",
+      "StationIndex": "70",
+      "StartAddr": 5000,
+      "DStartAddr": 17000,
+      "DBAddr1": 1941,
+      "EKSStartAddr": 1504,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP035",
+      "StationIndex": "35",
+      "StartAddr": 5500,
+      "DStartAddr": 19000,
+      "DBAddr1": 2041,
+      "EKSStartAddr": 1504,
+      "Task": 0
+    },
+    {
+      "StationCode": "OP080",
+      "StationIndex": "80",
+      "StartAddr": 6000,
+      "DStartAddr": 21000,
+      "DBAddr1": 2141,
       "EKSStartAddr": 1504,
       "Task": 0
     }
