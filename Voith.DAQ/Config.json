@@ -102,5 +102,9 @@
       "EKSStartAddr": 1504,
       "Task": 0
     }
+  ],
+  "MaterielCode": [
+    "AAA",
+    "BBB"
   ]
 }

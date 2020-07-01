@@ -34,6 +34,8 @@ namespace Voith.DAQ.UI
             JsonConfigHelper config = new JsonConfigHelper("Config.json");
             var str = config["StationList"];
             SystemConfig.StationList = (JArray)JsonConvert.DeserializeObject(str);
+            str = config["MaterielCode"];
+            SystemConfig.MaterielCode = (JArray)JsonConvert.DeserializeObject(str);
 
             SystemConfig.DBStringCurve = config["DBStringCurve"];
 

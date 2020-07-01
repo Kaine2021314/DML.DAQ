@@ -83,13 +83,13 @@ namespace Voith.DAQ.Common
                     return result.Content;
                 }
 
-                LogHelper.Info($"ReadBytes失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，长度：{count}");
+                LogHelper.Info($"ReadBytes失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，长度：{count}");
                 Thread.Sleep(300);
                 //goto Start;
             }
             catch (Exception e)
             {
-                LogHelper.Error(e, $"ReadBytes出错：DB块：db，开始地址：{startByteAdr}，长度：{count}");
+                LogHelper.Error(e, $"ReadBytes出错：DB块：{db}，开始地址：{startByteAdr}，长度：{count}");
                 Thread.Sleep(300);
                 //goto Start;
             }
@@ -120,7 +120,7 @@ namespace Voith.DAQ.Common
                     else
                     {
                         LogHelper.Info(
-                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
+                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
                         Thread.Sleep(300);
                         //goto Start;
                     }
@@ -136,7 +136,7 @@ namespace Voith.DAQ.Common
                     else
                     {
                         LogHelper.Info(
-                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
+                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
                         Thread.Sleep(300);
                         //goto Start;
                     }
@@ -152,7 +152,7 @@ namespace Voith.DAQ.Common
                     else
                     {
                         LogHelper.Info(
-                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
+                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
                         Thread.Sleep(300);
                         //goto Start;
                     }
@@ -168,7 +168,7 @@ namespace Voith.DAQ.Common
                     else
                     {
                         LogHelper.Info(
-                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
+                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
                         Thread.Sleep(300);
                         //goto Start;
                     }
@@ -196,7 +196,7 @@ namespace Voith.DAQ.Common
                     else
                     {
                         LogHelper.Info(
-                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
+                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
                         Thread.Sleep(300);
                         //goto Start;
                     }
@@ -212,7 +212,7 @@ namespace Voith.DAQ.Common
                     else
                     {
                         LogHelper.Info(
-                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
+                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
                         Thread.Sleep(300);
                         //goto Start;
                     }
@@ -228,7 +228,7 @@ namespace Voith.DAQ.Common
                     else
                     {
                         LogHelper.Info(
-                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
+                            $"Read{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，长度：{varCount}，Bit位：{bitAdr}");
                         Thread.Sleep(300);
                         //goto Start;
                     }
@@ -236,7 +236,7 @@ namespace Voith.DAQ.Common
             }
             catch (Exception e)
             {
-                LogHelper.Error(e, $"ReadBytes出错：DB块：db，开始地址：{startByteAdr}，长度：{varCount}");
+                LogHelper.Error(e, $"ReadBytes出错：DB块：{db}，开始地址：{startByteAdr}，长度：{varCount}");
                 Thread.Sleep(300);
                 //goto Start;
             }
@@ -261,7 +261,7 @@ namespace Voith.DAQ.Common
                     var result = SiemensTcpNet.Write("DB" + db + "." + (startByteAdr + 450 * i), value.Skip(450 * i).Take(450).ToArray());//.Content;
                     if (!result.IsSuccess)
                     {
-                        LogHelper.Info($"WriteBytes失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}");
+                        LogHelper.Info($"WriteBytes失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}");
                         Thread.Sleep(300);
                         //goto Start;
                     }
@@ -271,7 +271,7 @@ namespace Voith.DAQ.Common
             }
             catch (Exception e)
             {
-                LogHelper.Error(e, $"WriteBytes出错：DB块：db，开始地址：{startByteAdr}");
+                LogHelper.Error(e, $"WriteBytes出错：DB块：{db}，开始地址：{startByteAdr}");
                 Thread.Sleep(300);
                 //goto Start;
                 return false;
@@ -301,7 +301,7 @@ namespace Voith.DAQ.Common
                     }
 
                     LogHelper.Info(
-                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
+                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
                     Thread.Sleep(300);
                     //goto Start;
                 }
@@ -315,7 +315,7 @@ namespace Voith.DAQ.Common
                     }
 
                     LogHelper.Info(
-                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
+                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
                     Thread.Sleep(300);
                     //goto Start;
                 }
@@ -329,7 +329,7 @@ namespace Voith.DAQ.Common
                     }
 
                     LogHelper.Info(
-                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
+                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
                     Thread.Sleep(300);
                     //goto Start;
                 }
@@ -343,7 +343,7 @@ namespace Voith.DAQ.Common
                     }
 
                     LogHelper.Info(
-                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
+                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
                     Thread.Sleep(300);
                     //goto Start;
                 }
@@ -357,7 +357,7 @@ namespace Voith.DAQ.Common
                     }
 
                     LogHelper.Info(
-                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
+                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
                     Thread.Sleep(300);
                     //goto Start;
                 }
@@ -373,7 +373,7 @@ namespace Voith.DAQ.Common
                     }
 
                     LogHelper.Info(
-                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
+                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
                     Thread.Sleep(300);
                     //goto Start;
                 }
@@ -387,14 +387,14 @@ namespace Voith.DAQ.Common
                     }
 
                     LogHelper.Info(
-                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：db，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
+                        $"Write{typeof(T).Name}失败：{result.ToMessageShowString()}\nDB块：{db}，开始地址：{startByteAdr}，数据：{value}，Bit位：{bitAdr}");
                     Thread.Sleep(300);
                     //goto Start;
                 }
             }
             catch (Exception e)
             {
-                LogHelper.Error(e, $"ReadBytes出错：DB块：db，开始地址：{startByteAdr}，数据：{value}");
+                LogHelper.Error(e, $"WriteBytes出错：DB块：{db}，开始地址：{startByteAdr}，数据：{value}");
                 Thread.Sleep(300);
                 //goto Start;
             }

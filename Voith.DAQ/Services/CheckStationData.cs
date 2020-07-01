@@ -45,27 +45,26 @@ namespace Voith.DAQ.Services
                 {
                     try
                     {
-                        var datas = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 244, 1);
+                        var datas = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 14, 1);
                         var formulaNo = PlcHelper.Read<short>(_workpiece.DBAddr1, 0);
                         FNo = formulaNo.Length > 0 && formulaNo[0] > 0 ? formulaNo[0] : (short)1;
                         if (datas[0] == 1)//校验本工位数据
                         {
                             if (Check(_workpiece.StationCode))
                             {
-                                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 244, 101);
-                                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 360, 1);
+                                PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 108, 101);
+                                PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 114, 1);
                                 LogHelper.Info($"校验本工位数据->合格->{_workpiece.StationCode}->{_workpiece.SerialNumber}->101 1");
 
-                                if (_workpiece.StationIndex == 70)//订单下线解绑
+                                if (_workpiece.StationIndex == 700000)//订单下线
                                 {
                                     string sql = $"update dbo.GoodsOrder set OrderStatus=2,OffLineTime='{ DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") }'" +
                                                       $"where SerialNumber='{ _workpiece.SerialNumber }'";
                                     _db.Db.Ado.ExecuteCommand(sql);
-                                    LogHelper.Info($"校验本工位数据->订单下线解绑->{_workpiece.StationCode}->{_workpiece.SerialNumber}");
+                                    LogHelper.Info($"校验本工位数据->订单下线->{_workpiece.StationCode}->{_workpiece.SerialNumber}");
 
                                     //写入空托盘放行信号
-                                    //PlcHelper.Write(SystemConfig.ControlDB, _workpiece.StartAddr + 360, (short)2);
-                                    //PlcHelper.Write(SystemConfig.ControlDB, _workpiece.StartAddr + 248, (short)101);
+                                    //PlcHelper.Write(SystemConfig.DTControlDB, _workpiece.StartAddr + 114, (short)2);
                                 }
 
                                 string sql0 = $"update dbo.GoodsOrder set CheckResult=1 " +
@@ -75,8 +74,8 @@ namespace Voith.DAQ.Services
                             }
                             else
                             {
-                                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 244, 102);
-                                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 360, 3);
+                                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 108, 102);
+                                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 114, 3);
                                 LogHelper.Info($"校验本工位数据->不合格->{_workpiece.StationCode}->{_workpiece.SerialNumber}->102 3");
 
                                 string sql = $"update dbo.GoodsOrder set CheckResult=2 " +
@@ -86,27 +85,18 @@ namespace Voith.DAQ.Services
                             }
 
                             //记录循环时间和eks信息
-                            var stationdata = PlcHelper.ReadBytes(SystemConfig.ControlDB, startAddress + 4, 26);
-                            if (!string.IsNullOrEmpty(_workpiece.SerialNumber))
-                                StationData(stationdata);
-                            LogHelper.Info($"{_workpiece.StationCode}工位信息记录B");
+                            //var stationdata = PlcHelper.ReadBytes(SystemConfig.ControlDB, startAddress + 4, 26);
+                            //if (!string.IsNullOrEmpty(_workpiece.SerialNumber))
+                            //    StationData(stationdata);
+                            //LogHelper.Info($"{_workpiece.StationCode}记录循环时间和eks信息");
                         }
 
-                        datas = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 32, 1);
+                        datas = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 6, 1);
                         if (datas[0] == 1)//校验其他工位数据
                         {
-                            var stationCode = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 30, 1)[0];
+                            var stationCode = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 6, 1)[0];
                             string stationName = String.Empty;
-                            //switch (stationCode.ToString().Length)
-                            //{
-                            //    case 2:
-                            //        stationName = "OP0" + stationCode;
-                            //        break;
-                            //    case 3:
-                            //        stationName = "OP0" + stationCode.ToString().Substring(0, 2) + "-" +
-                            //                      stationCode.ToString().Substring(2, 1);
-                            //        break;
-                            //}
+
                             foreach (JObject o in SystemConfig.StationList)
                             {
                                 if (o["StationIndex"].ToString() == stationCode.ToString())
@@ -118,16 +108,17 @@ namespace Voith.DAQ.Services
 
                             if (Check(stationName))
                             {
-                                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 32, 101);
+                                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress, 101);
                                 LogHelper.Info($"校验前工位数据->合格->{_workpiece.StationCode}->101->{stationCode}");
                             }
                             else
                             {
-                                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 32, 102);
+                                PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress, 102);
                                 LogHelper.Info($"校验前工位数据->不合格->{_workpiece.StationCode}->102->{stationCode}");
                             }
                         }
 
+                        #region 注释
                         //if (_workpiece.StationCode == "OP010")
                         //{
                         //    datas = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 370, 1);
@@ -159,6 +150,7 @@ namespace Voith.DAQ.Services
                         //        }
                         //    }
                         //}
+                        #endregion
                     }
                     catch (Exception ex)
                     {

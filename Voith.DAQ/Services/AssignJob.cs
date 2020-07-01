@@ -44,94 +44,57 @@ namespace Voith.DAQ.Services
                 {
                     try
                     {
-                        var datas = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 34, 1);
-                        //var temp = PlcHelper.ReadBytes(SystemConfig.ControlDB, 3040, 98);
-                        //PlcHelper.Write<string>(SystemConfig.ControlDB, 3040, "AAAA");
+                        var datas = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress + 8, 1);
                         if (datas[0] == 1)
                         {
                             short rcode = 102;
-                            //PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 36, Int16.Parse(_workpiece.ProductTypeCode));
-                            if (_workpiece.StationIndex == 90)//下发订单产品类型
+
+                            PlcHelper.WriteBytes(SystemConfig.DTControlDB, startAddress + 4,
+                                SystemConfig.GetProductionTypes(_workpiece.MaterielCode));
+                            //PlcHelper.Write<string>(SystemConfig.DTControlDB, startAddress + 40 + 2, _workpiece.SerialNumber);
+                            LogHelper.Info($"{_workpiece.StationCode}->{_workpiece.MaterielCode}->{_workpiece.Type1}->{_workpiece.Type2}->" +
+                                $"{ _workpiece.SerialNumber}");
+
+                            string sql =
+                                $"SELECT COUNT(1) FROM dbo.Formula WHERE StationName = '{_workpiece.StationCode}'";//此处未区分配方号
+                            var stepCount = Convert.ToInt32(_db.Db.Ado.GetScalar(sql));
+
+                            switch (_workpiece.StationIndex)
                             {
-                                var goodsOrder = _db.GoodsOrderDb.AsQueryable().Where(it => it.OrderStatus == 1).OrderBy(it => it.ID, OrderByType.Desc).First();
-                                if (goodsOrder != null)
-                                {
-                                    PlcHelper.WriteBytes(SystemConfig.ControlDB, startAddress + 36,
-                                        SystemConfig.GetProductionTypes(goodsOrder.MaterielCode, goodsOrder.Type1, goodsOrder.Type2));
-                                    LogHelper.Info($"{_workpiece.StationCode}->{goodsOrder.MaterielCode}->{goodsOrder.Type1}->{goodsOrder.Type2}");
-                                    rcode = 101;
-                                }
+                                case 61000000:
+                                    stepCount = 3;
+                                    break;
+                                default:
+                                    break;
                             }
-                            else
+
+                            sql =
+                                $"SELECT * FROM dbo.QualityData WHERE SerialNumber = '{_workpiece.SerialNumber}' AND StationCode = '{_workpiece.StationCode}' ORDER BY StepNo,ID";
+                            var dataList = _db.Db.Ado.GetDataTable(sql);
+
+                            byte[] enableBytes = new byte[stepCount];
+                            string ebstr = "";
+                            for (int i = 1; i <= stepCount; i++)
                             {
-                                PlcHelper.WriteBytes(SystemConfig.ControlDB, startAddress + 36,
-                                    SystemConfig.GetProductionTypes(_workpiece.MaterielCode, _workpiece.Type1, _workpiece.Type2));
-                                PlcHelper.Write<string>(SystemConfig.ControlDB, startAddress + 40 + 2, _workpiece.SerialNumber);
-                                LogHelper.Info($"{_workpiece.StationCode}->{_workpiece.MaterielCode}->{_workpiece.Type1}->{_workpiece.Type2}->" +
-                                    $"{ _workpiece.SerialNumber}");
-
-                                string sql =
-                                    $"SELECT COUNT(1) FROM dbo.Formula WHERE StationName = '{_workpiece.StationCode}'";
-                                var stepCount = Convert.ToInt32(_db.Db.Ado.GetScalar(sql));
-
-                                switch (_workpiece.StationIndex)
+                                enableBytes[i - 1] = 1;
+                                foreach (DataRow row in dataList.Rows)
                                 {
-                                    case 45:
-                                    case 46:
-                                        stepCount = 26;
-                                        break;
-                                    case 61:
-                                        stepCount = 3;
-                                        break;
-                                    case 81:
-                                    case 82:
-                                        stepCount = 25;
-                                        break;
-                                    default:
-                                        break;
-                                }
-
-                                sql =
-                                    $"SELECT * FROM dbo.QualityData WHERE SerialNumber = '{_workpiece.SerialNumber}' AND StationCode = '{_workpiece.StationCode}' ORDER BY StepNo,ID";
-                                var dataList = _db.Db.Ado.GetDataTable(sql);
-
-                                byte[] enableBytes = new byte[stepCount];
-                                string ebstr = "";
-                                for (int i = 1; i <= stepCount; i++)
-                                {
-                                    enableBytes[i - 1] = 1;
-                                    foreach (DataRow row in dataList.Rows)
+                                    if (row["StepNo"]?.ToString() == i.ToString())
                                     {
-                                        if (row["StepNo"]?.ToString() == i.ToString())
-                                        {
-                                            enableBytes[i - 1] = (byte)(Convert.ToInt32(row["CheckResult"]) == 1 ? 2 : 1);
-                                            ebstr += enableBytes[i - 1].ToString() + ",";
-                                            //goto End;
-                                        }
+                                        enableBytes[i - 1] = (byte)(Convert.ToInt32(row["CheckResult"]) == 1 ? 2 : 1);
+                                        ebstr += enableBytes[i - 1].ToString() + ",";
+                                        //goto End;
                                     }
-
-                                    //enableBytes[i - 1] = 1;
-
-                                    //End:;
                                 }
 
-                                //OP061 条码使能判断
-                                if(_workpiece.StationIndex == 61)
-                                {
-                                    sql = $"SELECT * FROM dbo.KeyCodeInfo WHERE SerialNumber = '{_workpiece.SerialNumber}' AND StationCode = '{_workpiece.StationCode}' ORDER BY ID desc";
-                                    var keycode = _db.Db.Ado.GetDataTable(sql);
-
-                                    enableBytes[0] = (byte)(keycode != null && keycode.Rows.Count > 0 &&
-                                    !string.IsNullOrEmpty(keycode.Rows[0]["KeyCode"].ToString()) ? 2 : 1);
-
-                                    ebstr += "KeyCode=" + enableBytes[0].ToString();
-                                }
-
-                                PlcHelper.WriteBytes(SystemConfig.ControlDB, startAddress + 140, enableBytes);
-                                LogHelper.Info($"{_workpiece.StationCode}->101 使能信号->{ebstr}");
-                                rcode = 101;
+                                //enableBytes[i - 1] = 1;
                             }
-                            PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 34, rcode);
+
+                            PlcHelper.WriteBytes(SystemConfig.DTControlDB, startAddress + 6, enableBytes);
+                            LogHelper.Info($"{_workpiece.StationCode}->101 使能信号->{ebstr}");
+                            rcode = 101;
+
+                            PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 2, rcode);
                         }
                     }
                     catch (Exception ex)
@@ -139,7 +102,7 @@ namespace Voith.DAQ.Services
                         LogHelper.Error(ex);
                         try
                         {
-                            PlcHelper.Write<short>(SystemConfig.ControlDB, startAddress + 34, 102);
+                            PlcHelper.Write<short>(SystemConfig.DTControlDB, startAddress + 2, 102);
                         }
                         catch { }
                     }

@@ -79,6 +79,7 @@ namespace Voith.DAQ.Services
                                             }
                                             else
                                             {
+												QueryOrderInfo(scanerCode, 2);
                                                 if (!Check(_workpiece.StationCode))
                                                 {
                                                     rcode = QueryOrderInfo(scanerCode, 2);

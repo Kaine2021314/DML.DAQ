@@ -48,10 +48,8 @@ namespace Voith.DAQ
 
         public static JArray StationList;
         public static JArray MaterielCode;
-        public static JArray Type1List;
-        public static JArray Type2List;
 
-        public static byte[] GetProductionTypes(string t0, string t1, string t2)
+        public static byte[] GetProductionTypes(string t0)
         {
             byte[] r = new byte[3];
             int typeAdd = 1;
@@ -59,25 +57,9 @@ namespace Voith.DAQ
             {
                 if (t0 == MaterielCode[i].ToString())
                 {
-                    if(t0 == "153008271120CN")
-                        typeAdd = 7;
+                    //if(t0 == "153008271120CN")
+                    //    typeAdd = 7;
                     r[0] = (byte)(i + typeAdd);
-                    break;
-                }
-            }
-            for (int i = 0; i < Type1List.Count; i++)
-            {
-                if (t1 == Type1List[i].ToString())
-                {
-                    r[1] = (byte)(i + 1);
-                    break;
-                }
-            }
-            for (int i = 0; i < Type2List.Count; i++)
-            {
-                if (t2 == Type2List[i].ToString())
-                {
-                    r[2] = (byte)(i + 1);
                     break;
                 }
             }

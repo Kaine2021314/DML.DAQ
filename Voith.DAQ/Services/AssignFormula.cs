@@ -48,9 +48,8 @@ namespace Voith.DAQ.Services
                      根据工位位置确定读取的数据起始位置*/
                     try
                     {
-                        var startAddress = _workpiece.StartAddr + 240;//配方地址
-
-                        var signals = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress, 2);
+                        var startAddress = _workpiece.StartAddr + 10;//配方请求地址
+                        var signals = PlcHelper.Read<short>(SystemConfig.ControlDB, startAddress, 10);
                         if (signals[1] == 1)
                         {
                             var formulaNo = signals[0].ToString("D3");
@@ -109,19 +108,19 @@ namespace Voith.DAQ.Services
                                 PlcHelper.WriteBytes(_workpiece.DBAddr1, 0, workContent);//写入配方数据
                                 PlcHelper.Write(_workpiece.DBAddr1, 0, Convert.ToInt16(formulaNo));//写入配方编号
                                 PlcHelper.Write(_workpiece.DBAddr1, 2, (short)i);// 写入工艺总步数
-                                PlcHelper.Write(1045, startAddress + 2, (short)101);//写入配方下发完成信号
+                                PlcHelper.Write(SystemConfig.DTControlDB, startAddress + 106, (short)101);//写入配方下发完成信号
                                 LogHelper.Info($"{_workpiece.StationCode}->配方下发 101->{formulas.Count}->{formulaNo}");
                             }
                             else
                             {
-                                PlcHelper.Write(1045, startAddress + 2, (short)102);
+                                PlcHelper.Write(SystemConfig.DTControlDB, startAddress + 106, (short)102);
                                 LogHelper.Info($"{_workpiece.StationCode}->配方102->{formulaNo}");
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        PlcHelper.Write(1045, _workpiece.StartAddr, (short)102);//XRU配方下发失败信号
+                        PlcHelper.Write(SystemConfig.DTControlDB, _workpiece.StartAddr + 106, (short)102);//XRU配方下发失败信号
                         LogHelper.Error(ex, "配方下发线程出错：");
                     }
 
